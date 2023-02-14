@@ -27,7 +27,7 @@ def varGenerator():
         yield current_var
 
 
-def encodeCell(cell: str) -> list[SudokuNumber] | list[EmptyCell]:
+def encodeCell(cell: str) -> SudokuNumber | EmptyCell:
     """Converts a cell into either a list of SudokuNumber (being the
     number at that cell) or a list of EmptyCell indicating nothing was
     found at that cell
@@ -36,15 +36,15 @@ def encodeCell(cell: str) -> list[SudokuNumber] | list[EmptyCell]:
     not letting me iterate over Optionals
 
     """
-    if cell == "":
-        return [EmptyCell()]
+    if cell == ".":
+        return EmptyCell()
     else:
-        return [SudokuNumber(c) for c in cell]
+        return SudokuNumber(cell)
 
 
 def cnfEncodeLine(line: str) -> list[SudokuNumber | EmptyCell]:
     "Convert a line into a list of nu"
-    return list(chain(*map(encodeCell, line.rstrip().split("."))))
+    return list(map(encodeCell, line.rstrip()))
 
 
 def printBaseEncoding(encodedVersion: list[list[SudokuNumber | EmptyCell]]) -> None:
@@ -54,26 +54,26 @@ def printBaseEncoding(encodedVersion: list[list[SudokuNumber | EmptyCell]]) -> N
     iter = varGenerator()
     possible_values = 9
     # May have over done it on the list composition here
-    base_encoding: list[list[list[str]]] = [
-        [[str(next(iter)) for _ in range(possible_values)] + ["0"] for _ in row]
+    base_encoding: list[list[int]] = [
+        [next(iter) for _ in range(possible_values)]
         for row in encodedVersion
+        for cell in row
     ]
 
     max_value = next(iter) - 1
 
     print("c Every cell contains at least one number")
     print(f"p cnf {max_value} {max_value//possible_values}")
-    for row in base_encoding:
-        for cell in row:
-            print(" ".join(cell))
+    for cell in base_encoding:
+        print(" ".join(map(str, cell)) + " 0")
 
 
 def main():
-    # TODO maybe only drop it if that actually is the case since they may
-    # not feed us the exact same file
-    # Drop the last line since it's just the eof character
-    input = [line for line in stdin][0:-1]
+    # TODO Maybe drop last line if it's not started with a number
+    # character
+    input = [line for line in stdin]
     encodedVersion = [*map(cnfEncodeLine, input)]
+    print(list(map(str, encodedVersion[len(encodedVersion) - 1])))
     printBaseEncoding(encodedVersion)
 
 
