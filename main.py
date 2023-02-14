@@ -43,9 +43,10 @@ def cnfEncodeLine(line: str) -> list[SudokuNumber | EmptyCell]:
     return list(chain(*map(encodeCell, line.rstrip().split("."))))
 
 
-def printBaseEncoding(encodedVersion: list[list[SudokuNumber | EmptyCell]]):
-    # Every cell contains at least one number Iterator used to
-    # generate a new number every time next is called on it
+def printBaseEncoding(encodedVersion: list[list[SudokuNumber | EmptyCell]]) -> None:
+    """Base encoding for every cell contains at least one number"""
+    # Iterator used to generate a new number every time next is called
+    # on it.
     iter = varGenerator()
     possible_values = 9
     # May have over done it on the list composition here
