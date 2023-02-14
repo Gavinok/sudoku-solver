@@ -8,9 +8,13 @@ class SudokuNumber:
     def __init__(self, num: str):
         self.number_string = num
 
+    def __str__(self) -> str:
+        return self.number_string
+
 
 class EmptyCell:
-    pass
+    def __str__(self) -> str:
+        return "EmptyCell"
 
 
 def varGenerator():
