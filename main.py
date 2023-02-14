@@ -73,7 +73,6 @@ def main():
     # character
     input = [line for line in stdin]
     encodedVersion = [*map(cnfEncodeLine, input)]
-    print(list(map(str, encodedVersion[len(encodedVersion) - 1])))
     printBaseEncoding(encodedVersion)
 
 
