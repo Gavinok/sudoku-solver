@@ -2,7 +2,7 @@
 
 from sys import stdin
 from itertools import chain
-
+from typing import Union, List
 
 class SudokuNumber:
     def __init__(self, num: str):
@@ -27,7 +27,7 @@ def varGenerator():
         yield current_var
 
 
-def encodeCell(cell: str) -> SudokuNumber | EmptyCell:
+def encodeCell(cell: str) -> Union[SudokuNumber, EmptyCell]:
     """Converts a cell into either a list of SudokuNumber (being the
     number at that cell) or a list of EmptyCell indicating nothing was
     found at that cell
@@ -36,18 +36,19 @@ def encodeCell(cell: str) -> SudokuNumber | EmptyCell:
     not letting me iterate over Optionals
 
     """
-    if cell == ".":
+    if cell == "." or cell == "*" or cell == "0" or cell == "?":
         return EmptyCell()
-    else:
+    else:   
         return SudokuNumber(cell)
 
 
-def cnfEncodeLine(line: str) -> list[SudokuNumber | EmptyCell]:
+def cnfEncodeLine(line: str) -> List[Union[SudokuNumber, EmptyCell]]:
+
     "Convert a line into a list of nu"
     return list(map(encodeCell, line.rstrip()))
 
 
-def printBaseEncoding(encodedVersion: list[list[SudokuNumber | EmptyCell]]) -> None:
+def printBaseEncoding(encodedVersion: List[List[Union[SudokuNumber, EmptyCell]]]) -> None:
     """Base encoding for every cell contains at least one number"""
     # Iterator used to generate a new number every time next is called
     # on it.
