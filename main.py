@@ -84,7 +84,7 @@ def getBaseEncoding(encodedVersion: List[List[Union[SudokuNumber, EmptyCell]]]) 
         print(" ".join(map(str, cell)) + " 0")
 
     printNoDoubleRowEncoding(base_encoding, encodedVersion, max_value)
-        
+
 
 def printBaseEncoding(encodedVersion: List[List[Union[SudokuNumber, EmptyCell]]]) -> None:
     """Base encoding for every cell contains at least one number"""
@@ -118,10 +118,14 @@ def printNoDoubleRowEncoding(listOfInputs: List[List[int]], puzzleList: List[Lis
                 ##This doesn't seem to work correctly.
                 ##It SHOULD set all non-matching literals in a given list to negative if the value is set
                 print("This cell has a value!")
-                for literal in listOfInputs[i]:
+                for j, literal in enumerate(listOfInputs[i]):
+                    if baseNineSingleVal(literal) != puzzleCell.number_string:
+                        listOfInputs[i][j] = -literal
+                        forbiddenValues.append(puzzleCell.number_string)
                     print(baseNineSingleVal(literal), puzzleCell.number_string)
                     if baseNineSingleVal(literal) != puzzleCell.number_string:
-                        literal = -literal
+                        listOfInputs[i][j] = -literal
+                        print("literal negated")
                         forbiddenValues.append(puzzleCell.number_string)
             else:
                 print("No match")
