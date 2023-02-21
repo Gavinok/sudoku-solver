@@ -7,10 +7,10 @@ import math
 
 class SudokuNumber:
     def __init__(self, num: int):
-        self.number_string = num
+        self.number = num
 
     def __str__(self) -> int:
-        return self.number_string
+        return self.number
 
 
 class EmptyCell:
@@ -108,37 +108,35 @@ def printBaseEncoding(encodedVersion: List[List[Union[SudokuNumber, EmptyCell]]]
 
 
 def printNoDoubleRowEncoding(listOfInputs: List[List[int]], puzzleList: List[List[Union[SudokuNumber, EmptyCell]]], maxValues: int) -> None:
-    i = -1
-    for puzzleRow in puzzleList:
-        #initialize list of values that may not be repeated
-        forbiddenValues = []
-        i = i + 1
-        for puzzleCell in puzzleRow:
-            if isinstance(puzzleCell, SudokuNumber):
-                ##This doesn't seem to work correctly.
-                ##It SHOULD set all non-matching literals in a given list to negative if the value is set
-                print("This cell has a value!")
-                for j, literal in enumerate(listOfInputs[i]):
-                    if baseNineSingleVal(literal) != puzzleCell.number_string:
-                        listOfInputs[i][j] = -literal
-                        forbiddenValues.append(puzzleCell.number_string)
-                    print(baseNineSingleVal(literal), puzzleCell.number_string)
-                    if baseNineSingleVal(literal) != puzzleCell.number_string:
-                        listOfInputs[i][j] = -literal
-                        print("literal negated")
-                        forbiddenValues.append(puzzleCell.number_string)
-            else:
-                print("No match")
-                #  if there are literals that are on the unacceptable list, the values should be negated
-                if baseNineSingleVal(literal) in forbiddenValues:
-                    literal = -literal
-
     possible_values = 9
+    lineCount = 0
+    forbiddenValues = set()
     print("c Every Row contains no duplicate numbers!")
     print(f"p cnf {maxValues} {maxValues//possible_values}")
+    for i, puzzleRow in enumerate(puzzleList):
+        for j, puzzleCell in enumerate(puzzleRow):
+            if isinstance(puzzleCell, SudokuNumber):
+                cellValue = baseNineSingleVal(puzzleCell.number)
+                forbiddenValues.add(cellValue)
+                
+                for k, literal in enumerate(listOfInputs[lineCount]):
+                    if baseNineSingleVal(literal) != cellValue:
+                        listOfInputs[lineCount][k] = -literal
+                    else:
+                        listOfInputs[lineCount][k] = abs(literal)
+                lineCount+=1
+            elif isinstance(puzzleCell, EmptyCell):
+                print(forbiddenValues)
+                literalRow = listOfInputs[lineCount]
+                for a, literal in enumerate(literalRow):
+                    for forbiddenValue in forbiddenValues:
+                        if baseNineSingleVal(literal) == forbiddenValue:
+                            literalRow[a] = -literal
+                lineCount+=1
+        if lineCount % 9 == 0:
+            forbiddenValues = set()
     for cell in listOfInputs:
         print(" ".join(map(str, cell)) + " 0")
-    
 """
 def getNoDoubleRowEncoding(listOfInputs: List[List[int]], puzzleList: List[List[Union[SudokuNumber, EmptyCell]]]) -> List[List[int]]:
     for literalRow, puzzleCellRow in zip(listOfInputs, puzzleList):
@@ -146,9 +144,9 @@ def getNoDoubleRowEncoding(listOfInputs: List[List[int]], puzzleList: List[List[
             forbiddenValues = []
             if isinstance(puzzleCell, SudokuNumber):
                 for value in literal:
-                    if baseNineSingleVal(value) != int(puzzleCell.number_string):
+                    if baseNineSingleVal(value) != int(puzzleCell.number):
                         value = -value
-                        forbiddenValues.append(puzzleCell.number_string)
+                        forbiddenValues.append(puzzleCell.number)
             else:
                 for value in literal:
                     if baseNineSingleVal(value) in forbiddenValues:
