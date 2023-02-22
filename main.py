@@ -363,8 +363,8 @@ def main():
     printBaseEncoding(getBaseEncoding(encoded_with_rows))
     printNoDoubleRowEncoding(getBaseEncoding(encoded_with_rows))
     printNoColEncoding(getNoColEncoding(getBaseEncoding(encoded_with_rows)))
-    print("block of 3")
-    getNo3x3Dup(getBaseEncoding(encoded_with_rows))
+    # print("block of 3")
+    # getNo3x3Dup(getBaseEncoding(encoded_with_rows))
 
 
 if __name__ == "__main__":
