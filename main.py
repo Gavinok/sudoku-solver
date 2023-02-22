@@ -198,9 +198,6 @@ def getNoColEncoding(base_encoding: PuzzleSolution) -> PuzzleSolution:
         List[Tuple[Union[SudokuNumber, EmptyCell], List[int]]]
     ] = transpose(base_with_vars)
 
-    for row in transposed_encoding:
-        print([str(col[0]) + str(col[1]) for col in row])
-
     lineCount = 0
     forbiddenValues = set()
     new_cell_vals: List[List[int]] = []
@@ -209,7 +206,6 @@ def getNoColEncoding(base_encoding: PuzzleSolution) -> PuzzleSolution:
             cell_val = puzzleCell[0]
             cell_vars = puzzleCell[1]
             if isinstance(cell_val, SudokuNumber):
-                print("Adding " + str(cell_val))
                 current_num = cell_val.number
                 forbiddenValues.add(baseNineSingleVal(current_num))
                 # Negate all values that don't match this cell value
@@ -225,8 +221,6 @@ def getNoColEncoding(base_encoding: PuzzleSolution) -> PuzzleSolution:
                 )
                 lineCount += 1
             elif isinstance(cell_val, EmptyCell):
-                print("Adding " + str(cell_val))
-                print(forbiddenValues)
                 # Not completely sure what this is doing
                 new_cell_vals.append(
                     list(
@@ -265,12 +259,6 @@ def main():
     encoded_with_rows: List[List[Union[SudokuNumber, EmptyCell]]] = [
         no_row_encoding[i : i + 9] for i in range(0, len(no_row_encoding) - 9, 9)
     ]
-    for row in encoded_with_rows:
-        print([str(col) for col in row])
-
-    print("NOW THE TRANSPOSED VERSION")
-    for row in transpose(encoded_with_rows):
-        print([str(col) for col in row])
 
     printBaseEncoding(getBaseEncoding(encoded_with_rows))
     printNoDoubleRowEncoding(getBaseEncoding(encoded_with_rows))
