@@ -231,7 +231,7 @@ def getNoColEncoding(base_encoding: PuzzleSolution) -> PuzzleSolution:
                 new_cell_vals.append(
                     list(
                         map(
-                            lambda v: 0 - v
+                            lambda v: -v
                             if baseNineSingleVal(v) in forbiddenValues
                             else v,
                             cell_vars,
