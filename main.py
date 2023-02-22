@@ -138,7 +138,7 @@ def printNoDoubleRowEncoding(
                         listOfInputs[lineCount][k] = abs(literal)
                 lineCount += 1
             elif isinstance(puzzleCell, EmptyCell):
-                print(forbiddenValues)
+                # print(forbiddenValues)
                 literalRow = listOfInputs[lineCount]
                 # Not completely sure what this is doing
                 for a, literal in enumerate(literalRow):
