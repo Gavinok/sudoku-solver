@@ -170,11 +170,20 @@ def transpose(lst: List[List[T]]) -> List[List[T]]:
     return list(map(list, zip(*lst)))
 
 
+def printNoColEncoding(no_col_dup_encoding: PuzzleSolution) -> None:
+    maxValues = no_col_dup_encoding.largest_variable
+    possible_values = 9
+    print("c Every Column contains no duplicate numbers!")
+    print(f"p cnf {maxValues} {maxValues//possible_values}")
+    for row in no_col_dup_encoding.current_encoding:
+        print(" ".join(map(str, row)) + " 0")
+
+
 def getNoColEncoding(base_encoding: PuzzleSolution) -> PuzzleSolution:
     base = base_encoding.current_encoding
     # Zip each element of the input encoding with the variables associated with it
     # e.g. [(1 , [ 1 ,2 ,3 ,4 , 5 , 6 , 7 , 8, 9])
-    #      (6 , [ 10 , 12 , 13 , 14 , 15 , 16 , 17 , 18, 19])]
+    #       (6 , [ 10 , 12 , 13 , 14 , 15 , 16 , 17 , 18, 19])]
     base_with_vars = list(
         map(
             list,
@@ -236,13 +245,9 @@ def getNoColEncoding(base_encoding: PuzzleSolution) -> PuzzleSolution:
                     + str(cell_val)
                 )
         forbiddenValues = set()
-
-    maxValues = base_encoding.largest_variable
-    possible_values = 9
-    print("c Every Column contains no duplicate numbers!")
-    print(f"p cnf {maxValues} {maxValues//possible_values}")
-    for row in new_cell_vals:
-        print(" ".join(map(str, row)) + " 0")
+    return PuzzleSolution(
+        new_cell_vals, base_encoding.current_puzzle, base_encoding.largest_variable
+    )
 
 
 def main():
@@ -267,36 +272,9 @@ def main():
     for row in transpose(encoded_with_rows):
         print([str(col) for col in row])
 
-    # base = getBaseEncoding(encoded_with_rows).current_encoding
-    # split_base = list(
-    #     map(
-    #         list,
-    #         map(
-    #             zip,
-    #             encoded_with_rows,
-    #             [base[i : i + 9] for i in range(0, len(base) - 9, 9)],
-    #         ),
-    #     )
-    # )
-    # non string version
-    # split_base = list(
-    #     map(
-    #         list,
-    #         map(
-    #             zip,
-    #             encoded_with_rows,
-    #             [base[i : i + 9] for i in range(0, len(base) - 9, 9)],
-    #         ),
-    #     )
-    # )
-    print("split base")
-    # for row in transpose(split_base):
-    #     print([str(col[0]) + " " + str(col[1]) for col in row])
-
-    # testInput = "163805070008040065005007008450082039301000040700000000839050000604200590000093081"
     printBaseEncoding(getBaseEncoding(encoded_with_rows))
     printNoDoubleRowEncoding(getBaseEncoding(encoded_with_rows))
-    getNoColEncoding(getBaseEncoding(encoded_with_rows))
+    printNoColEncoding(getNoColEncoding(getBaseEncoding(encoded_with_rows)))
 
 
 if __name__ == "__main__":
