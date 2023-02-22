@@ -244,6 +244,106 @@ def getNoColEncoding(base_encoding: PuzzleSolution) -> PuzzleSolution:
     )
 
 
+def getNo3x3Dup(base_encoding: PuzzleSolution) -> PuzzleSolution:
+    base = base_encoding.current_encoding
+    # Zip each element of the input encoding with the variables associated with it
+    # e.g. [(1 , [ 1 ,2 ,3 ,4 , 5 , 6 , 7 , 8, 9])
+    #       (6 , [ 10 , 12 , 13 , 14 , 15 , 16 , 17 , 18, 19])]
+    base_with_vars = list(
+        map(
+            list,
+            map(
+                zip,
+                base_encoding.current_puzzle,
+                [base[i : i + 9] for i in range(0, len(base), 9)],
+            ),
+        )
+    )
+    # split each row into blocks of 3
+    blocks_of_3 = list(
+        map(
+            lambda row: [
+                (row[i + 0], row[i + 1], row[i + 2]) for i in range(0, len(row), 3)
+            ],
+            base_with_vars,
+        )
+    )
+    blocks_of_3x3 = [
+        (blocks_of_3[i], blocks_of_3[i], blocks_of_3[i])
+        for i in range(0, len(blocks_of_3), 3)
+    ]
+    print(blocks_of_3x3)
+    # block = []
+    # subblocks = [[], [], []]
+    # for i, row in enumerate(blocks_of_3):
+    #     if i != 0 and i % 3 == 0:
+    #         block.append(subblocks[0])
+    #         block.append(subblocks[1])
+    #         block.append(subblocks[2])
+    #         subblock = []
+    #     subblocks[0].append(row[0])
+    #     subblocks[1].append(row[1])
+    #     subblocks[2].append(row[2])
+    # # split each row into blocks of 3
+    # for b in block:
+    #     for l in b:
+    #         print(l)
+
+    # for q in blocks_of_3[3]:
+    #     for z in q:
+    #         print(str(z[0]))
+    #     print("nxt")
+    # print("nxt2")
+    # transposed_encoding: List[
+    #     List[Tuple[Union[SudokuNumber, EmptyCell], List[int]]]
+    # ] = transpose(base_with_vars)
+
+    # lineCount = 0
+    # forbiddenValues = set()
+    # new_cell_vals: List[List[int]] = []
+    # for row in transposed_encoding:
+    #     for puzzleCell in row:
+    #         cell_val = puzzleCell[0]
+    #         cell_vars = puzzleCell[1]
+    #         if isinstance(cell_val, SudokuNumber):
+    #             current_num = cell_val.number
+    #             forbiddenValues.add(baseNineSingleVal(current_num))
+    #             # Negate all values that don't match this cell value
+    #             new_cell_vals.append(
+    #                 list(
+    #                     map(
+    #                         lambda v: abs(v)
+    #                         if baseNineSingleVal(v) == current_num
+    #                         else -v,
+    #                         cell_vars,
+    #                     )
+    #                 )
+    #             )
+    #             lineCount += 1
+    #         elif isinstance(cell_val, EmptyCell):
+    #             # Not completely sure what this is doing
+    #             new_cell_vals.append(
+    #                 list(
+    #                     map(
+    #                         lambda v: -v
+    #                         if baseNineSingleVal(v) in forbiddenValues
+    #                         else v,
+    #                         cell_vars,
+    #                     )
+    #                 )
+    #             )
+    #             lineCount += 1
+    #         else:
+    #             raise Exception(
+    #                 "Puzzle Cells must be of type SudokuNumber or EmptyCell but got "
+    #                 + str(cell_val)
+    #             )
+    #     forbiddenValues = set()
+    # return PuzzleSolution(
+    #     new_cell_vals, base_encoding.current_puzzle, base_encoding.largest_variable
+    # )
+
+
 def main():
     # TODO Maybe drop last line if it's not started with a number
     # character
@@ -263,6 +363,8 @@ def main():
     printBaseEncoding(getBaseEncoding(encoded_with_rows))
     printNoDoubleRowEncoding(getBaseEncoding(encoded_with_rows))
     printNoColEncoding(getNoColEncoding(getBaseEncoding(encoded_with_rows)))
+    print("block of 3")
+    getNo3x3Dup(getBaseEncoding(encoded_with_rows))
 
 
 if __name__ == "__main__":
