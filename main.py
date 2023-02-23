@@ -14,9 +14,15 @@ class SudokuNumber:
     def __str__(self) -> str:
         return str(self.number)
 
+    def __repr__(self) -> str:
+        return str(self.number)
+
 
 class EmptyCell:
     def __str__(self) -> str:
+        return "EmptyCell"
+
+    def __repr__(self) -> str:
         return "EmptyCell"
 
 
@@ -244,6 +250,42 @@ def getNoColEncoding(base_encoding: PuzzleSolution) -> PuzzleSolution:
     )
 
 
+class SudokuNumberVarsPair:
+    """Dedicated class for the combination of a suduko number and the
+    associated list of variables"""
+
+    def __init__(
+        self, sudoku_number: Union[SudokuNumber, EmptyCell], sat_vars: List[int]
+    ):
+        self.sudoku_number = sudoku_number
+        self.sat_vars = sat_vars
+
+    def __repr__(self) -> str:
+        if isinstance(self.sudoku_number, SudokuNumber):
+            return "(" + str(self.sudoku_number.number) + "," + str(self.sat_vars) + ")"
+        else:
+            return "(" + str(self.sudoku_number) + "," + str(self.sat_vars) + ")"
+
+    def __str__(self) -> str:
+        if isinstance(self.sudoku_number, SudokuNumber):
+            return "(" + str(self.sudoku_number.number) + "," + str(self.sat_vars) + ")"
+        else:
+            return "(" + str(self.sudoku_number) + "," + str(self.sat_vars) + ")"
+
+
+class ThreeByThree:
+    """A class used to describe a block of 3x3 SudokuNumberVarsPair"""
+
+    def __init__(self, row1, row2, row3) -> None:
+        self.rows = []
+        self.rows.append(row1)
+        self.rows.append(row2)
+        self.rows.append(row3)
+
+    def __repr__(self) -> str:
+        return "3x3(" + str(self.rows) + ")"
+
+
 def getNo3x3Dup(base_encoding: PuzzleSolution) -> PuzzleSolution:
     base = base_encoding.current_encoding
     # Zip each element of the input encoding with the variables associated with it
@@ -253,7 +295,7 @@ def getNo3x3Dup(base_encoding: PuzzleSolution) -> PuzzleSolution:
         map(
             list,
             map(
-                zip,
+                lambda x, y: map(SudokuNumberVarsPair, x, y),
                 base_encoding.current_puzzle,
                 [base[i : i + 9] for i in range(0, len(base), 9)],
             ),
@@ -269,10 +311,22 @@ def getNo3x3Dup(base_encoding: PuzzleSolution) -> PuzzleSolution:
         )
     )
     blocks_of_3x3 = [
-        (blocks_of_3[i], blocks_of_3[i], blocks_of_3[i])
+        [
+            ThreeByThree(
+                blocks_of_3[i][0], blocks_of_3[i + 1][0], blocks_of_3[i + 2][0]
+            ),
+            ThreeByThree(
+                blocks_of_3[i][1], blocks_of_3[i + 1][1], blocks_of_3[i + 2][1]
+            ),
+            ThreeByThree(
+                blocks_of_3[i][2], blocks_of_3[i + 1][2], blocks_of_3[i + 2][2]
+            ),
+        ]
         for i in range(0, len(blocks_of_3), 3)
     ]
-    print(blocks_of_3x3)
+    blocks_of_3x3 = [num for elem in blocks_of_3x3 for num in elem]
+    for block in blocks_of_3x3:
+        print(block)
     # block = []
     # subblocks = [[], [], []]
     # for i, row in enumerate(blocks_of_3):
@@ -342,6 +396,20 @@ def getNo3x3Dup(base_encoding: PuzzleSolution) -> PuzzleSolution:
     # return PuzzleSolution(
     #     new_cell_vals, base_encoding.current_puzzle, base_encoding.largest_variable
     # )
+
+
+def test():
+    testInput = "163805070008040065005007008450082039301000040700000000839050000604200590000093081"
+    # Now flattens the list into a single line
+    no_row_encoding = [
+        item for sublist in [*map(cnfEncodeLine, testInput)] for item in sublist
+    ]
+    # This splits the input into rows of 9
+    encoded_with_rows: List[List[Union[SudokuNumber, EmptyCell]]] = [
+        no_row_encoding[i : i + 9] for i in range(0, len(no_row_encoding), 9)
+    ]
+    print("block of 3")
+    getNo3x3Dup(getBaseEncoding(encoded_with_rows))
 
 
 def main():
