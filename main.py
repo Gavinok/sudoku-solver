@@ -190,7 +190,7 @@ def getNoColEncoding(base_encoding: PuzzleSolution) -> PuzzleSolution:
             map(
                 zip,
                 base_encoding.current_puzzle,
-                [base[i : i + 9] for i in range(0, len(base) - 9, 9)],
+                [base[i : i + 9] for i in range(0, len(base), 9)],
             ),
         )
     )
@@ -357,14 +357,12 @@ def main():
     ]
     # This splits the input into rows of 9
     encoded_with_rows: List[List[Union[SudokuNumber, EmptyCell]]] = [
-        no_row_encoding[i : i + 9] for i in range(0, len(no_row_encoding) - 9, 9)
+        no_row_encoding[i : i + 9] for i in range(0, len(no_row_encoding), 9)
     ]
 
     printBaseEncoding(getBaseEncoding(encoded_with_rows))
     printNoDoubleRowEncoding(getBaseEncoding(encoded_with_rows))
     printNoColEncoding(getNoColEncoding(getBaseEncoding(encoded_with_rows)))
-    # print("block of 3")
-    # getNo3x3Dup(getBaseEncoding(encoded_with_rows))
 
 
 if __name__ == "__main__":
