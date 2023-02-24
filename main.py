@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+from itertools import count
 from sys import stdin
 from itertools import chain
 from typing import Tuple, Union, List
@@ -39,16 +40,6 @@ class PuzzleSolution:
         self.current_encoding = current_encoding
         self.current_puzzle = current_puzzle
         self.largest_variable = largest_variable
-
-
-def varGenerator():
-    """Generates unique numbers from 0 onward infinitely. There is
-    probably something built in for this in Python but it's slipping
-    my mind"""
-    current_var = 0
-    while True:
-        current_var += 1
-        yield current_var
 
 
 def encodeCell(cell: str) -> Union[SudokuNumber, EmptyCell]:
@@ -96,7 +87,7 @@ def getBaseEncoding(
     """Base encoding for every cell contains at least one number"""
     # Iterator used to generate a new number every time next is called
     # on it.
-    iter = varGenerator()
+    iter = count(1)
     possible_values = 9
     # May have over done it on the list composition here
     base_encoding: list[list[int]] = [
