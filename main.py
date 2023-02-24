@@ -106,10 +106,10 @@ def printBaseEncoding(base_encoding: PuzzleSolution) -> None:
     # Iterator used to generate a new number every time next is called
     # on it.
     possible_values = 9
-    print("c Every cell contains at least one number")
     print(
-        f"p cnf {base_encoding.largest_variable} {base_encoding.largest_variable//possible_values}"
+        f"p cnf {base_encoding.largest_variable} {4 * (base_encoding.largest_variable//possible_values)}"
     )
+    print("c Every cell contains at least one number")
     for cell in base_encoding.current_encoding:
         print(" ".join(map(str, cell)) + " 0")
 
@@ -150,7 +150,6 @@ def printNoDoubleRowEncoding(
     maxValues = puzzle.largest_variable
     possible_values = 9
     print("c Every Row contains no duplicate numbers!")
-    print(f"p cnf {maxValues} {maxValues//possible_values}")
     on_var = 0
     for cell in listOfInputs:
         on_var += 1
@@ -171,34 +170,19 @@ def printNoColEncoding(no_col_dup_encoding: PuzzleSolution) -> None:
     maxValues = no_col_dup_encoding.largest_variable
     possible_values = 9
     print("c Every Column contains no duplicate numbers!")
-    print(f"p cnf {maxValues} {maxValues//possible_values}")
+    # print(f"p cnf {maxValues} {maxValues//possible_values}")
     for row in no_col_dup_encoding.current_encoding:
         print(" ".join(map(str, row)) + " 0")
 
 
-def getNoColEncoding(base_encoding: PuzzleSolution) -> PuzzleSolution:
-    base = base_encoding.current_encoding
-    # Zip each element of the input encoding with the variables associated with it
-    # e.g. [(1 , [ 1 ,2 ,3 ,4 , 5 , 6 , 7 , 8, 9])
-    #       (6 , [ 10 , 12 , 13 , 14 , 15 , 16 , 17 , 18, 19])]
-    base_with_vars = list(
-        map(
-            list,
-            map(
-                zip,
-                base_encoding.current_puzzle,
-                [base[i : i + 9] for i in range(0, len(base), 9)],
-            ),
-        )
-    )
-    transposed_encoding: List[
-        List[Tuple[Union[SudokuNumber, EmptyCell], List[int]]]
-    ] = transpose(base_with_vars)
+def removeDuplicates(
+    p: List[List[Tuple[Union[SudokuNumber, EmptyCell], List[int]]]]
+) -> List[List[int]]:
 
     lineCount = 0
     forbiddenValues = set()
     new_cell_vals: List[List[int]] = []
-    for row in transposed_encoding:
+    for row in p:
         for puzzleCell in row:
             cell_val = puzzleCell[0]
             cell_vars = puzzleCell[1]
@@ -236,6 +220,28 @@ def getNoColEncoding(base_encoding: PuzzleSolution) -> PuzzleSolution:
                     + str(cell_val)
                 )
         forbiddenValues = set()
+    return new_cell_vals
+
+
+def getNoColEncoding(base_encoding: PuzzleSolution) -> PuzzleSolution:
+    base = base_encoding.current_encoding
+    # Zip each element of the input encoding with the variables associated with it
+    # e.g. [(1 , [ 1 ,2 ,3 ,4 , 5 , 6 , 7 , 8, 9])
+    #       (6 , [ 10 , 12 , 13 , 14 , 15 , 16 , 17 , 18, 19])]
+    base_with_vars = list(
+        map(
+            list,
+            map(
+                zip,
+                base_encoding.current_puzzle,
+                [base[i : i + 9] for i in range(0, len(base), 9)],
+            ),
+        )
+    )
+    transposed_encoding: List[
+        List[Tuple[Union[SudokuNumber, EmptyCell], List[int]]]
+    ] = transpose(base_with_vars)
+    new_cell_vals = removeDuplicates(transposed_encoding)
     return PuzzleSolution(
         new_cell_vals, base_encoding.current_puzzle, base_encoding.largest_variable
     )
@@ -268,13 +274,13 @@ class ThreeByThree:
     """A class used to describe a block of 3x3 SudokuNumberVarsPair"""
 
     def __init__(self, row1, row2, row3) -> None:
-        self.rows = []
-        self.rows.append(row1)
-        self.rows.append(row2)
-        self.rows.append(row3)
+        assert len(row1) == 3
+        assert len(row2) == 3
+        assert len(row3) == 3
+        self.row = row1 + row2 + row3
 
     def __repr__(self) -> str:
-        return "3x3(" + str(self.rows) + ")"
+        return "3x3(" + str(self.row) + ")"
 
 
 def getNo3x3Dup(base_encoding: PuzzleSolution) -> PuzzleSolution:
@@ -286,7 +292,8 @@ def getNo3x3Dup(base_encoding: PuzzleSolution) -> PuzzleSolution:
         map(
             list,
             map(
-                lambda x, y: map(SudokuNumberVarsPair, x, y),
+                # lambda x, y: map(SudokuNumberVarsPair, x, y),
+                zip,
                 base_encoding.current_puzzle,
                 [base[i : i + 9] for i in range(0, len(base), 9)],
             ),
@@ -296,97 +303,54 @@ def getNo3x3Dup(base_encoding: PuzzleSolution) -> PuzzleSolution:
     blocks_of_3 = list(
         map(
             lambda row: [
-                (row[i + 0], row[i + 1], row[i + 2]) for i in range(0, len(row), 3)
+                [row[i + 0], row[i + 1], row[i + 2]] for i in range(0, len(row), 3)
             ],
             base_with_vars,
         )
     )
-    blocks_of_3x3 = [
-        [
-            ThreeByThree(
-                blocks_of_3[i][0], blocks_of_3[i + 1][0], blocks_of_3[i + 2][0]
-            ),
-            ThreeByThree(
-                blocks_of_3[i][1], blocks_of_3[i + 1][1], blocks_of_3[i + 2][1]
-            ),
-            ThreeByThree(
-                blocks_of_3[i][2], blocks_of_3[i + 1][2], blocks_of_3[i + 2][2]
-            ),
+    # This is kinda cursed but it splits the rows into blocks of 3
+    blocks_of_3x3: List[ThreeByThree] = [
+        num
+        for elem in [
+            [
+                ThreeByThree(
+                    blocks_of_3[i][0], blocks_of_3[i + 1][0], blocks_of_3[i + 2][0]
+                ),
+                ThreeByThree(
+                    blocks_of_3[i][1], blocks_of_3[i + 1][1], blocks_of_3[i + 2][1]
+                ),
+                ThreeByThree(
+                    blocks_of_3[i][2], blocks_of_3[i + 1][2], blocks_of_3[i + 2][2]
+                ),
+            ]
+            for i in range(0, len(blocks_of_3), 3)
         ]
-        for i in range(0, len(blocks_of_3), 3)
+        for num in elem
     ]
-    blocks_of_3x3 = [num for elem in blocks_of_3x3 for num in elem]
-    for block in blocks_of_3x3:
-        print(block)
-    # block = []
-    # subblocks = [[], [], []]
-    # for i, row in enumerate(blocks_of_3):
-    #     if i != 0 and i % 3 == 0:
-    #         block.append(subblocks[0])
-    #         block.append(subblocks[1])
-    #         block.append(subblocks[2])
-    #         subblock = []
-    #     subblocks[0].append(row[0])
-    #     subblocks[1].append(row[1])
-    #     subblocks[2].append(row[2])
-    # # split each row into blocks of 3
-    # for b in block:
-    #     for l in b:
-    #         print(l)
 
-    # for q in blocks_of_3[3]:
-    #     for z in q:
-    #         print(str(z[0]))
-    #     print("nxt")
-    # print("nxt2")
-    # transposed_encoding: List[
-    #     List[Tuple[Union[SudokuNumber, EmptyCell], List[int]]]
-    # ] = transpose(base_with_vars)
+    new_cell_vals = removeDuplicates(list(map(lambda b: b.row, blocks_of_3x3)))
 
-    # lineCount = 0
-    # forbiddenValues = set()
-    # new_cell_vals: List[List[int]] = []
-    # for row in transposed_encoding:
-    #     for puzzleCell in row:
-    #         cell_val = puzzleCell[0]
-    #         cell_vars = puzzleCell[1]
-    #         if isinstance(cell_val, SudokuNumber):
-    #             current_num = cell_val.number
-    #             forbiddenValues.add(baseNineSingleVal(current_num))
-    #             # Negate all values that don't match this cell value
-    #             new_cell_vals.append(
-    #                 list(
-    #                     map(
-    #                         lambda v: abs(v)
-    #                         if baseNineSingleVal(v) == current_num
-    #                         else -v,
-    #                         cell_vars,
-    #                     )
-    #                 )
-    #             )
-    #             lineCount += 1
-    #         elif isinstance(cell_val, EmptyCell):
-    #             # Not completely sure what this is doing
-    #             new_cell_vals.append(
-    #                 list(
-    #                     map(
-    #                         lambda v: -v
-    #                         if baseNineSingleVal(v) in forbiddenValues
-    #                         else v,
-    #                         cell_vars,
-    #                     )
-    #                 )
-    #             )
-    #             lineCount += 1
-    #         else:
-    #             raise Exception(
-    #                 "Puzzle Cells must be of type SudokuNumber or EmptyCell but got "
-    #                 + str(cell_val)
-    #             )
-    #     forbiddenValues = set()
-    # return PuzzleSolution(
-    #     new_cell_vals, base_encoding.current_puzzle, base_encoding.largest_variable
-    # )
+    return PuzzleSolution(
+        new_cell_vals, base_encoding.current_puzzle, base_encoding.largest_variable
+    )
+
+
+def printOriginalSud(sud: List[List[Union[SudokuNumber, EmptyCell]]]):
+    for row in sud:
+        print(" ".join([repr(i) if isinstance(i, SudokuNumber) else "0" for i in row]))
+
+
+def encodeAsRows(text):
+    # Now flattens the list into a single line
+    no_row_encoding = [
+        item for sublist in [*map(cnfEncodeLine, text)] for item in sublist
+    ]
+    # This splits the input into rows of 9
+    encoded_with_rows: List[List[Union[SudokuNumber, EmptyCell]]] = [
+        no_row_encoding[i : i + 9] for i in range(0, len(no_row_encoding), 9)
+    ]
+
+    return encoded_with_rows
 
 
 def test():
@@ -403,6 +367,15 @@ def test():
     getNo3x3Dup(getBaseEncoding(encoded_with_rows))
 
 
+def printEncoding(puz: PuzzleSolution, comment: str) -> None:
+    maxValues = puz.largest_variable
+    possible_values = 9
+    print("c " + comment)
+    # print(f"p cnf {maxValues} {maxValues//possible_values}")
+    for row in puz.current_encoding:
+        print(" ".join(map(str, row)) + " 0")
+
+
 def main():
     # TODO Maybe drop last line if it's not started with a number
     # character
@@ -410,18 +383,37 @@ def main():
     # sideLength = int(math.sqrt(len(input)))
 
     testInput = "163805070008040065005007008450082039301000040700000000839050000604200590000093081"
-    # Now flattens the list into a single line
-    no_row_encoding = [
-        item for sublist in [*map(cnfEncodeLine, testInput)] for item in sublist
-    ]
-    # This splits the input into rows of 9
-    encoded_with_rows: List[List[Union[SudokuNumber, EmptyCell]]] = [
-        no_row_encoding[i : i + 9] for i in range(0, len(no_row_encoding), 9)
-    ]
+
+    encoded_with_rows: List[List[Union[SudokuNumber, EmptyCell]]] = encodeAsRows(
+        testInput
+    )
 
     printBaseEncoding(getBaseEncoding(encoded_with_rows))
     printNoDoubleRowEncoding(getBaseEncoding(encoded_with_rows))
-    printNoColEncoding(getNoColEncoding(getBaseEncoding(encoded_with_rows)))
+    printEncoding(
+        getNoColEncoding(getBaseEncoding(encoded_with_rows)),
+        "Every Column contains no duplicate numbers!",
+    )
+    printEncoding(
+        getNo3x3Dup(getBaseEncoding(encoded_with_rows)), "No duplicates in a 3x3 block"
+    )
+    # base_encoding = getBaseEncoding(encoded_with_rows)
+    # print(
+    #     list(
+    #         map(
+    #             list,
+    #             map(
+    #                 # lambda x, y: map(SudokuNumberVarsPair, x, y),
+    #                 zip,
+    #                 base_encoding.current_puzzle,
+    #                 [
+    #                     base_encoding.current_encoding[i : i + 9]
+    #                     for i in range(0, len(base_encoding.current_encoding), 9)
+    #                 ],
+    #             ),
+    #         )
+    #     )
+    # )
 
 
 if __name__ == "__main__":
