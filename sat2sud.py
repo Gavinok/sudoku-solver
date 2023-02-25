@@ -55,11 +55,11 @@ def make_list(data_input):
 
             if num_in_cell == 0:
                 num_in_cell = 9
-            print(
-                "This is: {}, positive no.= {}, and sudoku answer {}\n".format(
-                    my_list[count], positive_ints[0], num_in_cell
-                )
-            )
+            # print(
+            #     "This is: {}, positive no.= {}, and sudoku answer {}\n".format(
+            #         my_list[count], positive_ints[0], num_in_cell
+            #     )
+            # )
             # print(num_in_cell)
             # print('\n')
             row.append(num_in_cell)
