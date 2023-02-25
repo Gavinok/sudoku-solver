@@ -82,7 +82,7 @@ def getBaseEncoding(
     base_encoding: list[list[int]] = [
         [next(iter) for _ in range(possible_values)]
         for row in encodedVersion
-        for cell in row
+        for _ in row
     ]
     max_value = next(iter) - 1
 
@@ -96,8 +96,8 @@ def getBaseEncoding(
     )
 
 
-def printBaseEncoding(base_encoding: PuzzleSolution) -> None:
-    """Base encoding for every cell contains at least one number"""
+def printMinimalEncoding(base_encoding: PuzzleSolution) -> None:
+    """Produce the minimal encoding for every cell"""
     # Iterator used to generate a new number every time next is called
     # on it.
     possible_values = 9
@@ -105,7 +105,7 @@ def printBaseEncoding(base_encoding: PuzzleSolution) -> None:
     columns = noDupInCol()
     three_x_three = noDupIn3x3()
     print(
-        f"p cnf {base_encoding.largest_variable} {(len(base_encoding.current_encoding)) + len(rows) + len(columns) + len(three_x_three)}"
+        f"p cnf {base_encoding.largest_variable} {len(base_encoding.current_encoding + rows + columns + three_x_three)}"
     )
     print("c Each number appears at most once in every row")
     for cell in rows:
@@ -140,6 +140,7 @@ def encodeAsRows(text):
 
 
 def encode_board(b: PuzzleSolution) -> PuzzleSolution:
+    "Encodes te board into a format that can be output indicating the current state of all filled cells"
     base = b.current_encoding
     # Zip each element of the input encoding with the variables associated with it
     # e.g. [(1 , [ 1 ,2 ,3 ,4 , 5 , 6 , 7 , 8, 9])
@@ -260,20 +261,15 @@ def demo():
         testInput
     )
 
-    printBaseEncoding(getBaseEncoding(encoded_with_rows))
+    printMinimalEncoding(getBaseEncoding(encoded_with_rows))
 
 
 def main():
     # TODO Maybe drop last line if it's not started with a number
     # character
     input = [line for line in stdin]
-    # sideLength = int(math.sqrt(len(input)))
-
-    # input = "163805070008040065005007008450082039301000040700000000839050000604200590000093081"
-
     encoded_with_rows: List[List[Union[SudokuNumber, EmptyCell]]] = encodeAsRows(input)
-
-    printBaseEncoding(getBaseEncoding(encoded_with_rows))
+    printMinimalEncoding(getBaseEncoding(encoded_with_rows))
 
 
 if __name__ == "__main__":
