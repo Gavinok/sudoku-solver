@@ -95,10 +95,16 @@ def getBaseEncoding(
         for row in encodedVersion
         for cell in row
     ]
-
     max_value = next(iter) - 1
 
-    return PuzzleSolution(base_encoding, encodedVersion, max_value)
+    return PuzzleSolution(
+        encode_board(
+            PuzzleSolution(base_encoding, encodedVersion, max_value)
+        ).current_encoding
+        + base_encoding,
+        encodedVersion,
+        max_value,
+    )
 
 
 def printBaseEncoding(base_encoding: PuzzleSolution) -> None:
@@ -106,9 +112,12 @@ def printBaseEncoding(base_encoding: PuzzleSolution) -> None:
     # Iterator used to generate a new number every time next is called
     # on it.
     possible_values = 9
+    base_rules = noColDup2(729)
     print(
-        f"p cnf {base_encoding.largest_variable} {4 * (base_encoding.largest_variable//possible_values)}"
+        f"p cnf {base_encoding.largest_variable} {(len(base_encoding.current_encoding)) + len(base_rules)}"
     )
+    for cell in base_rules:
+        print(" ".join(map(str, cell)) + " 0")
     print("c Every cell contains at least one number")
     for cell in base_encoding.current_encoding:
         print(" ".join(map(str, cell)) + " 0")
@@ -149,6 +158,7 @@ def printNoDoubleRowEncoding(
 
     maxValues = puzzle.largest_variable
     possible_values = 9
+
     print("c Every Row contains no duplicate numbers!")
     on_var = 0
     for cell in listOfInputs:
@@ -170,7 +180,7 @@ def printNoColEncoding(no_col_dup_encoding: PuzzleSolution) -> None:
     maxValues = no_col_dup_encoding.largest_variable
     possible_values = 9
     print("c Every Column contains no duplicate numbers!")
-    # print(f"p cnf {maxValues} {maxValues//possible_values}")
+    print(f"p cnf {maxValues} {maxValues//possible_values}")
     for row in no_col_dup_encoding.current_encoding:
         print(" ".join(map(str, row)) + " 0")
 
@@ -371,9 +381,38 @@ def printEncoding(puz: PuzzleSolution, comment: str) -> None:
     maxValues = puz.largest_variable
     possible_values = 9
     print("c " + comment)
-    # print(f"p cnf {maxValues} {maxValues//possible_values}")
+    print(f"p cnf {maxValues} {maxValues//possible_values}")
     for row in puz.current_encoding:
         print(" ".join(map(str, row)) + " 0")
+
+
+def encode_board(b: PuzzleSolution) -> PuzzleSolution:
+    base = b.current_encoding
+    # Zip each element of the input encoding with the variables associated with it
+    # e.g. [(1 , [ 1 ,2 ,3 ,4 , 5 , 6 , 7 , 8, 9])
+    #       (6 , [ 10 , 12 , 13 , 14 , 15 , 16 , 17 , 18, 19])]
+    base_with_vars: List[List[Tuple[Union[SudokuNumber, EmptyCell], List[int]]]] = list(
+        map(
+            list,
+            map(
+                zip,
+                b.current_puzzle,
+                [base[i : i + 9] for i in range(0, len(base), 9)],
+            ),
+        )
+    )
+
+    return PuzzleSolution(
+        [
+            [-x] if baseNineSingleVal(x) != cell[0].number else [x]
+            for row in base_with_vars
+            for cell in row
+            if isinstance(cell[0], SudokuNumber)
+            for x in cell[1]
+        ],
+        b.current_puzzle,
+        b.largest_variable,
+    )
 
 
 def main():
@@ -389,14 +428,15 @@ def main():
     )
 
     printBaseEncoding(getBaseEncoding(encoded_with_rows))
-    printNoDoubleRowEncoding(getBaseEncoding(encoded_with_rows))
-    printEncoding(
-        getNoColEncoding(getBaseEncoding(encoded_with_rows)),
-        "Every Column contains no duplicate numbers!",
-    )
-    printEncoding(
-        getNo3x3Dup(getBaseEncoding(encoded_with_rows)), "No duplicates in a 3x3 block"
-    )
+
+    # printNoDoubleRowEncoding(getBaseEncoding(encoded_with_rows))
+    # printEncoding(
+    #     getNoColEncoding(getBaseEncoding(encoded_with_rows)),
+    #     "Every Column contains no duplicate numbers!",
+    # )
+    # printEncoding(
+    #     getNo3x3Dup(getBaseEncoding(encoded_with_rows)), "No duplicates in a 3x3 block"
+    # )
     # base_encoding = getBaseEncoding(encoded_with_rows)
     # print(
     #     list(
@@ -414,6 +454,14 @@ def main():
     #         )
     #     )
     # )
+
+
+def noColDup2(maxValues):
+    return [
+        [-(x), -(x + (9 * y))]
+        for x in range(1, (maxValues))
+        for y in range(baseNineSingleVal(x), 8)
+    ]
 
 
 if __name__ == "__main__":
