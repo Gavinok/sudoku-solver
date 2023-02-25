@@ -27,6 +27,16 @@ To produce the final `sud2sat` and `sat2sud` executable run
 make
 ```
 
+# Running
+
+To test the sud2sat and sat2sud run the following commands (after building the project)
+
+```bash
+./sud2sat < testinput.txt > input.txt
+@-minisat input.txt out.txt
+./sat2sud < out.txt
+rm -f input.txt out.txt
+```
 
 # Development Setup (only necessary if you are not running on UVic's server)
 Install `poetry` and `pyenv`g

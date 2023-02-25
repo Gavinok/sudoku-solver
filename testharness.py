@@ -2,19 +2,12 @@
 from sys import stdin
 import subprocess
 
-p1 = subprocess.Popen(["./main.py"], stdout=subprocess.PIPE)
-
-# ==>
-pipe = subprocess.Popen(
-    ["./main.py"], shell=True, stdout=subprocess.PIPE, stdin=subprocess.PIPE
-)
-
 
 input = [line for line in stdin]
 tests = [input[i : i + 9] for i in range(1, len(input), 10)]
 for test in tests:
     p = subprocess.run(
-        ["./main.py"],
+        ["./sud2sat"],
         stdout=subprocess.PIPE,
         input="".join(test),
         encoding="ascii",
@@ -28,7 +21,7 @@ for test in tests:
     )
     with open("output.txt", "r") as text_file:
         p2 = subprocess.run(
-            ["./sat2sud.py"],
+            ["./sat2sud"],
             stdout=subprocess.PIPE,
             input=text_file.read(),
             encoding="ascii",
