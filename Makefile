@@ -33,7 +33,7 @@ top95: sud2sat1 sat2sud
 	rm -f input.txt out.txt
 
 clean:
-	rm -f sud2sat sud2sat2 sud2sat3 sat2sud v00849637.tar.gz
+	rm -f sud2sat sud2sat1 sud2sat2 sud2sat3 sat2sud v00849637.tar.gz
 
 tar: clean
 	mkdir -p v00849637
