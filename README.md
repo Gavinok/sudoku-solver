@@ -1,6 +1,6 @@
 # Group Members
 - Gavin Jaeger-Freeborn (V00849637)
-- AJ ... (V00...)
+- Ajiri Ogedegbe (V00882351)
 - Ian Weber (V00...)
 
 # Contents Of Repo
