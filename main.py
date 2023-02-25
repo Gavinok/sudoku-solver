@@ -2,10 +2,7 @@
 
 from itertools import count
 from sys import stdin
-from itertools import chain
 from typing import Tuple, Union, List
-from typing import TypeVar, Sequence
-import math
 
 
 class SudokuNumber:
@@ -100,7 +97,6 @@ def printMinimalEncoding(base_encoding: PuzzleSolution) -> None:
     """Produce the minimal encoding for every cell"""
     # Iterator used to generate a new number every time next is called
     # on it.
-    possible_values = 9
     rows = noDupInRow()
     columns = noDupInCol()
     three_x_three = noDupIn3x3()
