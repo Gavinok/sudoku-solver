@@ -7,7 +7,7 @@
 - sat2sud.py
   - source code for `sat2sud`
 - sud2sat.py
-  - source code for `sud2sat` `sud2sat1`
+  - source code for `sud2sat` and `sud2sat1`
 - sud2sat2.py
   - source code for `sud2sat2`
 - sat2sud3.py
