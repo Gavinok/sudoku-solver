@@ -112,11 +112,17 @@ def printBaseEncoding(base_encoding: PuzzleSolution) -> None:
     # Iterator used to generate a new number every time next is called
     # on it.
     possible_values = 9
-    base_rules = noColDup2(729)
+    base_rules = noDupInRow()
+    base_rules2 = noDupInCol()
+    base_rules3 = noDupIn3x3()
     print(
-        f"p cnf {base_encoding.largest_variable} {(len(base_encoding.current_encoding)) + len(base_rules)}"
+        f"p cnf {base_encoding.largest_variable} {(len(base_encoding.current_encoding)) + len(base_rules) + len(base_rules2) + len(base_rules3)}"
     )
     for cell in base_rules:
+        print(" ".join(map(str, cell)) + " 0")
+    for cell in base_rules2:
+        print(" ".join(map(str, cell)) + " 0")
+    for cell in base_rules3:
         print(" ".join(map(str, cell)) + " 0")
     print("c Every cell contains at least one number")
     for cell in base_encoding.current_encoding:
@@ -413,6 +419,88 @@ def encode_board(b: PuzzleSolution) -> PuzzleSolution:
         b.current_puzzle,
         b.largest_variable,
     )
+
+
+def noDupInRow():
+    clauses = []
+    for i in range(1, 10):
+        for k in range(1, 10):
+            for j in range(1, 10):
+                for l in range(j + 1, 10):
+                    clauses.append(
+                        [
+                            -((81 * (i - 1)) + (9 * (j - 1)) + (k - 1) + 1),
+                            -((81 * (i - 1)) + (9 * (l - 1)) + (k - 1) + 1),
+                        ]
+                    )
+    return clauses
+
+
+def noDupInCol():
+    clauses = []
+    for j in range(1, 10):
+        for k in range(1, 10):
+            for i in range(1, 10):
+                for l in range(i + 1, 10):
+                    clauses.append(
+                        [
+                            -((81 * (i - 1)) + (9 * (j - 1)) + (k - 1) + 1),
+                            -((81 * (l - 1)) + (9 * (j - 1)) + (k - 1) + 1),
+                        ]
+                    )
+    return clauses
+
+
+def noDupIn3x3():
+    clauses = []
+    for k in range(1, 10):
+        for a in range(0, 3):
+            for b in range(0, 3):
+                for u in range(1, 4):
+                    for v in range(1, 3):
+                        for w in range(v + 1, 4):
+                            clauses.append(
+                                [
+                                    -(
+                                        (81 * (((3 * a) + u) - 1))
+                                        + (9 * (((3 * b) + v) - 1))
+                                        + (k - 1)
+                                        + 1
+                                    ),
+                                    -(
+                                        (81 * (((3 * a) + u) - 1))
+                                        + (9 * (((3 * b) + w) - 1))
+                                        + (k - 1)
+                                        + 1
+                                    ),
+                                ]
+                            )
+
+    for k in range(1, 10):
+        for a in range(0, 3):
+            for b in range(0, 3):
+                for u in range(1, 3):
+                    for v in range(1, 4):
+                        for w in range(u + 1, 4):
+                            for t in range(1, 4):
+                                clauses.append(
+                                    [
+                                        -(
+                                            (81 * (((3 * a) + u) - 1))
+                                            + (9 * (((3 * b) + v) - 1))
+                                            + (k - 1)
+                                            + 1
+                                        ),
+                                        -(
+                                            (81 * (((3 * a) + w) - 1))
+                                            + (9 * (((3 * b) + t) - 1))
+                                            + (k - 1)
+                                            + 1
+                                        ),
+                                    ]
+                                )
+
+    return clauses
 
 
 def main():
