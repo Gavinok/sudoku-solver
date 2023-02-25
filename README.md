@@ -1,7 +1,7 @@
 # Group Members
 - Gavin Jaeger-Freeborn (V00849637)
 - Ajiri Ogedegbe (V00882351)
-- Ian Weber (V00...)
+- Ian Weber (V0092478)
 
 # Contents Of Repo
 - sat2sud.py
