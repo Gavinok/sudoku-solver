@@ -7,9 +7,17 @@
 - sat2sud.py
   - source code for `sat2sud`
 - sud2sat.py
-  - source code for `sud2sat`
+  - source code for `sud2sat` `sud2sat1`
+- sud2sat2.py
+  - source code for `sud2sat2`
+- sat2sud3.py
+  - source code for `sud2sat3`
 - p096_sudoku.txt 
   - The test input found https://projecteuler.net/project/resources/p096_sudoku.txt
+- top95 
+  - The test input found http://magictour.free.fr/top95
+- runtop95.sh
+  - Shell script to split the top95 input into lines and rest it against sud2sat1
 - testinput.txt 
   - A single sudoku puzzle from p096_sudoku used for testing.
   - see Makefile for example usage
@@ -35,6 +43,12 @@ To test the sud2sat and sat2sud run the following commands (after building the p
 ./sud2sat < testinput.txt > input.txt
 minisat input.txt out.txt
 ./sat2sud < out.txt
+```
+
+# Creating a tarball
+
+```bash
+make tar
 ```
 
 # Development Setup (only necessary if you are not running on UVic's server)

@@ -17,7 +17,13 @@ sud2sat3: sud2sat3.py
 	cp ./sud2sat3.py ./sud2sat3
 
 # Basic test for the default sud2sat
-full: sud2sat sat2sud
+full: all
+	./sud2sat2 < testinput.txt > input.txt
+	@-minisat input.txt out.txt
+	./sat2sud < out.txt
+	./sud2sat3 < testinput.txt > input.txt
+	@-minisat input.txt out.txt
+	./sat2sud < out.txt
 	./sud2sat < testinput.txt > input.txt
 	@-minisat input.txt out.txt
 	./sat2sud < out.txt
@@ -37,5 +43,5 @@ clean:
 
 tar: clean
 	mkdir -p v00849637
-	cp sud2sat.py sud2sat2.py sud2sat3.py sat2sud.py p096_sudoku.txt testinput.txt testharness.py Makefile README.md v00849637/
+	cp sud2sat.py sud2sat2.py sud2sat3.py sat2sud.py p096_sudoku.txt top95 testinput.txt testharness.py Makefile README.md v00849637/
 	tar cvzf v00849637.tar.gz v00849637
