@@ -101,11 +101,8 @@ def printMinimalEncoding(base_encoding: PuzzleSolution) -> None:
     columns = noDupInCol()
     three_x_three = noDupIn3x3()
     one_num_per_cell = mostOneNumberInCell()
-    every_num_in_row = everyNumAppearsOnceInRow()
-    every_num_in_col = everyNumAppearsOnceInCol()
-    every_num_in_3x3 = EveryNumAppearsInSubgrid()
     print(
-        f"p cnf {base_encoding.largest_variable} {len(base_encoding.current_encoding + rows + columns + three_x_three + one_num_per_cell + every_num_in_row + every_num_in_col+ every_num_in_3x3)}"
+        f"p cnf {base_encoding.largest_variable} {len(base_encoding.current_encoding + rows + columns + three_x_three + one_num_per_cell)}"
     )
     print("c Each number appears at most once in every row")
     for cell in rows:
