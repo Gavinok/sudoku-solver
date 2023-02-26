@@ -8,21 +8,17 @@ import string
 def read_input():
     data = []
     for line in sys.stdin:
-        # print(line.strip())
         if line == "UNSAT":
             print("Unsatisfiable\n")
         else:
             data.append(line.split())
 
     data = data[1:]  # removes 'SAT' from list
-    # data = ''.join(data)
-    # print(data)
     raw_data = []
     for x in data:
         for y in x:
             raw_data.append(y)
 
-    # print(raw_data)
     return raw_data
 
 
@@ -33,7 +29,6 @@ def make_list(data_input):
     for i in range(0, len(data_input), 9):
         group = data_input[i : i + 9]
         my_list.append(group)
-        # print(group)
 
     my_list.pop()  # removes final 0 in text file
 
@@ -55,13 +50,6 @@ def make_list(data_input):
 
             if num_in_cell == 0:
                 num_in_cell = 9
-            # print(
-            #     "This is: {}, positive no.= {}, and sudoku answer {}\n".format(
-            #         my_list[count], positive_ints[0], num_in_cell
-            #     )
-            # )
-            # print(num_in_cell)
-            # print('\n')
             row.append(num_in_cell)
             count += 1
         new_list.append(row)
@@ -81,7 +69,6 @@ def display_sudoku_puzzle(sudoku_puzzle):
             count += 1
         count = 0
         print(grid[0] + " " + grid[1] + " " + grid[2])
-        # print('\n')
 
 
 if __name__ == "__main__":
