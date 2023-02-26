@@ -45,7 +45,7 @@ def benchmark(sud2satexe):
     print(
         "cpu time average are " + str(reduce(lambda a, b: a + b, cpures) / len(results))
     )
-    print("cpu time average are " + str(max(cpures)))
+    print("cpu time worst are " + str(max(cpures)))
 
 
 benchmark("./sud2sat")
