@@ -33,7 +33,7 @@ def benchmark(sud2satexe):
                     if line.startswith("C") or line.startswith("M")
                 ]
             )
-            time.sleep(3)
+            time.sleep(1)
 
     memres = list(map(lambda x: x[0], results))
     cpures = list(map(lambda x: x[1], results))
@@ -49,9 +49,9 @@ def benchmark(sud2satexe):
 
 
 benchmark("./sud2sat")
-time.sleep(5)
+time.sleep(2)
 benchmark("./sud2sat1")
-time.sleep(5)
+time.sleep(2)
 benchmark("./sud2sat2")
-time.sleep(5)
+time.sleep(2)
 benchmark("./sud2sat3")

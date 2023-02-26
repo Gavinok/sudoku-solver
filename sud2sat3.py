@@ -123,6 +123,15 @@ def printMinimalEncoding(base_encoding: PuzzleSolution) -> None:
     print("c There is at most one number in each cel")
     for cell in one_num_per_cell:
         print(" ".join(map(str, cell)) + " 0")
+    print("c Every number appears at least once in each row")
+    for cell in every_num_in_row:
+        print(" ".join(map(str, cell)) + " 0")
+    print("c Every number appears at least once in each column")
+    for cell in every_num_in_col:
+        print(" ".join(map(str, cell)) + " 0")
+    print("c Each number appears at most one in every 3x3 sub-grid")
+    for cell in every_num_in_3x3:
+        print(" ".join(map(str, cell)) + " 0")
 
 
 def printOriginalSud(sud: List[List[Union[SudokuNumber, EmptyCell]]]):
@@ -275,7 +284,7 @@ def mostOneNumberInCell():
 
 
 def everyNumAppearsOnceInRow():
-    "There is at most one number in each cell"
+    "Every number appears at least once in each row"
     clauses = []
     for i in range(1, 10):
         for k in range(1, 10):
@@ -286,7 +295,7 @@ def everyNumAppearsOnceInRow():
 
 
 def everyNumAppearsOnceInCol():
-    "There is at most one number in each cell"
+    "Every number appears at least once in each column"
     clauses = []
     for j in range(1, 10):
         for k in range(1, 10):
