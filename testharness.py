@@ -33,13 +33,6 @@ def benchmark(sud2satexe):
                     if line.startswith("C") or line.startswith("M")
                 ]
             )
-            with open("output.txt", "r") as text_file:
-                p2 = subprocess.run(
-                    ["./sat2sud"],
-                    stdout=subprocess.PIPE,
-                    input=text_file.read(),
-                    encoding="ascii",
-                )
             time.sleep(3)
 
     memres = list(map(lambda x: x[0], results))
