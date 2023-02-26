@@ -205,44 +205,6 @@ def noDupInCol():
     return clauses
 
 
-def mostOneNumberInCell():
-    "There is at most one number in each cell"
-    clauses = []
-    for i in range(1, 10):
-        for j in range(1, 10):
-            for k in range(1, 9):
-                for l in range(k + 1, 10):
-                    clauses.append(
-                        [
-                            -((81 * (i - 1)) + (9 * (j - 1)) + (k - 1) + 1),
-                            -((81 * (i - 1)) + (9 * (j - 1)) + (l - 1) + 1),
-                        ]
-                    )
-    return clauses
-
-
-def everyNumAppearsOnceInRow():
-    "There is at most one number in each cell"
-    clauses = []
-    for i in range(1, 10):
-        for k in range(1, 10):
-            clauses.append(
-                [((81 * (i - 1)) + (9 * (j - 1)) + (k - 1) + 1) for j in range(1, 10)]
-            )
-    return clauses
-
-
-def everyNumAppearsOnceInCol():
-    "There is at most one number in each cell"
-    clauses = []
-    for j in range(1, 10):
-        for k in range(1, 10):
-            clauses.append(
-                [((81 * (i - 1)) + (9 * (j - 1)) + (k - 1) + 1) for i in range(1, 10)]
-            )
-    return clauses
-
-
 def noDupIn3x3():
     "Each number appears at most one in every 3x3 sub-grid"
     clauses = []
@@ -296,7 +258,45 @@ def noDupIn3x3():
     return clauses
 
 
-def EveryNumAppearsInSubgrid():
+def mostOneNumberInCell():
+    "There is at most one number in each cell"
+    clauses = []
+    for i in range(1, 10):
+        for j in range(1, 10):
+            for k in range(1, 9):
+                for l in range(k + 1, 10):
+                    clauses.append(
+                        [
+                            -((81 * (i - 1)) + (9 * (j - 1)) + (k - 1) + 1),
+                            -((81 * (i - 1)) + (9 * (j - 1)) + (l - 1) + 1),
+                        ]
+                    )
+    return clauses
+
+
+def everyNumAppearsOnceInRow():
+    "There is at most one number in each cell"
+    clauses = []
+    for i in range(1, 10):
+        for k in range(1, 10):
+            clauses.append(
+                [((81 * (i - 1)) + (9 * (j - 1)) + (k - 1) + 1) for j in range(1, 10)]
+            )
+    return clauses
+
+
+def everyNumAppearsOnceInCol():
+    "There is at most one number in each cell"
+    clauses = []
+    for j in range(1, 10):
+        for k in range(1, 10):
+            clauses.append(
+                [((81 * (i - 1)) + (9 * (j - 1)) + (k - 1) + 1) for i in range(1, 10)]
+            )
+    return clauses
+
+
+def everyNumAppearsInSubgrid():
     "Each number appears at most one in every 3x3 sub-grid"
     clauses = []
     for k in range(1, 10):
