@@ -30,7 +30,7 @@ full: all
 	rm -f input.txt out.txt
 
 # Benchmark against all p096_sudoku sudoku inputs
-benchmark: sud2sat sat2sud testharness.py
+benchmark: clean testharness.py all
 	./testharness.py < p096_sudoku.txt
 
 # Run the top95 tests
